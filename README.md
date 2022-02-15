@@ -14,5 +14,8 @@ Spring+SpringMVC+MyBatis框架写的人员信息管理系统（练习用CRUD为�
 数据校验（jQuery前端校验）+JSR303（后端校验）
 Ajax
 Restful风格URI（使用HTTP协议请求方式的动词，来表示对资源的操作GET/POST/PUT/DELETE）
-![image](https://user-images.githubusercontent.com/32674906/154027326-d0cd29ed-5414-4fca-9fe0-d0ad7343852f.png)
+![image](https://user-images.githubusercontent.com/32674906/154027410-a4fe02a7-0fbc-49ba-af9b-3d9e04a66867.png)
+
+![image](https://user-images.githubusercontent.com/32674906/154027466-f95a7d57-35b2-4f98-9a30-c5b6d0180f88.png)
+
 
