@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+       xmlns:mvc="http://www.springframework.org/schema/mvc"  
+       xmlns:context="http://www.springframework.org/schema/context"  
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+       xsi:schemaLocation="http://www.springframework.org/schema/beans  
+            http://www.springframework.org/schema/beans/spring-beans.xsd  
+            http://www.springframework.org/schema/context  
+            http://www.springframework.org/schema/context/spring-context.xsd  
+            http://www.springframework.org/schema/mvc  
+            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    
+    <!-- SpringMVC的配置文件，包含网站跳转逻辑的控制，配置()默认扫描所有，所以需要设置false禁止。 -->
+    <context:component-scan base-package="com.tongyaxi.personnelinfo" use-default-filters="false">
+    	<!-- 只扫描控制器 -->
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!-- 配置视图解析器，方便页面的返回 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- 路径前缀 -->
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <!-- 路径后缀 -->
+        <property name="suffix" value=".jsp"/>
+        <!-- 设置默认视图 -->
+        <!-- 默认视图只会应用于不包含 "redirect:" 和 "forward:" 前缀的视图名 -->
+        <!--        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>-->
+    </bean>
+    
+    <!-- 两个标准配置 -->
+    <!-- 将静态资源(或没有一个控制器可以映射的请求)交给Tomcat的默认Servlet处理 -->
+    <mvc:default-servlet-handler/>
+    <!--开启Spring MVC注解驱动, 支持基于注解的JSR303校验, 处理Ajax请求, 映射动态请求等
+         validator: 将指定的校验器注册进WebDataBinder
+         conversion-service: 将指定的ConversionService注册进HandlerAdapter
+    -->
+    <mvc:annotation-driven/>
+
+    
+    
+</beans>

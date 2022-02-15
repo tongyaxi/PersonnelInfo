@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+    
+    <!-- spring相关的上下文配置文件，主要配置和业务逻辑相关的。数据源，事务控制，AOP，业务逻辑等等 -->
+    <!-- 扫描除了@Controller和@ControllerAdvice外的所有注解 -->
+    
+    <context:component-scan base-package="com.tongyaxi.personnelinfo">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!--============================数据源的配置============================-->
+    <!-- 引入JDBC配置文件 -->
+    <context:property-placeholder location="classpath:dbconfig.properties" file-encoding="UTF-8"/>
+    <!-- 配置数据源(c3p0连接池) -->
+    <bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="jdbcUrl" value="${jdbc.jdbcUrl}"/>
+        <property name="driverClass" value="${jdbc.driverClass}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+    
+    <!--============================Spring-Mybatis整合配置============================-->
+    <!-- SqlSessionFactoryBean, 用于创建SqlSessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 设置数据源 -->
+        <property name="dataSource" ref="pooledDataSource"/>
+        <!-- 指定Mybatis配置文件位置 -->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <!-- 指定SQL映射文件位置 -->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+    </bean>
+    <!-- MapperScannerConfigurer, 扫描指定包下的mapper接口, 创建实例并添加到Spring容器中 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 扫描指定mapper接口所在的包，加到IOC容器中 -->
+        <property name="basePackage" value="com.tongyaxi.personnelinfo.dao"/>
+    </bean>
+    
+    <!-- 配置一个用于批量操作的SqlSessionTemplate, 它是线程安全的, 也不需要我们手动close -->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"/>
+        <constructor-arg name="executorType" value="SIMPLE"/>
+    </bean>
+    
+    <!--============================事务管理的配置============================-->
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- 设置数据源 -->
+        <property name="dataSource" ref="pooledDataSource"/>
+    </bean>
+    
+    <!-- AOP配置，开启基于注解的事务，使用xml配置形式的事务 -->
+    <aop:config>
+        <!-- 切入点表达式 -->
+        <aop:pointcut id="txPoint" expression="execution(* com.tongyaxi.personnelinfo.service..*(..))"/>
+        <!-- 配置事务增强 -->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPoint"/>
+    </aop:config>
+    <!-- 配置事务增强，事务如何切入 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <!-- 配置事务属性 -->
+        <tx:attributes>
+            <!-- name属性指定要在哪些方法上开启事务, 相当于对切入点进行二次过滤 -->
+            <tx:method name="*"/>
+            <tx:method name="get*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+    
+	<context:annotation-config/>
+	
+	
+</beans>
