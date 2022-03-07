@@ -1,5 +1,5 @@
 # PersonnelInfo
-Spring+SpringMVC+MyBatis框架写的人员信息管理系统（练习用CRUD为主）
+基于Maven+SpringMVC+Spring+MyBatsi+BootStrap组合快速上手增删改查功能。（练习用CRUD为主）(尚硅谷SSM实战演练丨ssm整合快速开发CRUD)
 
 # Framework：
 * 基础框架：SpringMVC+Spring+MyBatis(SSM)
